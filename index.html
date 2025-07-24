@@ -2,126 +2,109 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Visualizador de Modelos 3D</title>
+  <title>Selector de Modelos 3D</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #111;
-      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      color: #333;
       display: flex;
       flex-direction: column;
       align-items: center;
+      padding: 2rem;
+      min-height: 100vh;
     }
 
-    #menu {
-      margin: 20px;
+    h1 {
+      margin-bottom: 1rem;
+      font-weight: 600;
+      color: #444;
+      text-shadow: 1px 1px 3px rgba(255 255 255 / 0.6);
+    }
+
+    label {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: #555;
     }
 
     select {
-      padding: 10px;
-      font-size: 16px;
-      background-color: #222;
-      color: #fff;
-      border: 1px solid #444;
-      border-radius: 5px;
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      margin-bottom: 2rem;
+      border-radius: 12px;
+      border: 1.5px solid #c4c4c4;
+      background-color: #f5f7fa;
+      color: #555;
+      box-shadow: inset 2px 2px 6px #d9e2ec, inset -2px -2px 6px #ffffff;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      outline: none;
+      cursor: pointer;
+      width: 200px;
+    }
+    select:hover, select:focus {
+      border-color: #a3cef1;
+      box-shadow: 0 0 8px #a3cef1;
     }
 
-    canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
+    model-viewer {
+      width: 90vw;
+      max-width: 900px;
+      height: 70vh;
+      background: #f9fafb;
+      border: 2px solid #d1d5db;
+      border-radius: 20px;
+      box-shadow: 0 8px 15px rgba(163, 206, 241, 0.4);
+      transition: box-shadow 0.3s ease;
+    }
+    model-viewer:hover {
+      box-shadow: 0 12px 25px rgba(163, 206, 241, 0.7);
     }
 
-    #container {
-      width: 90%;
-      height: 80vh;
+    @media (max-width: 600px) {
+      model-viewer {
+        height: 50vh;
+      }
+      select {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
+
   <h1>Visualizador de Modelos 3D</h1>
 
-  <div id="menu">
-    <label for="modelo">Elegir modelo: </label>
-    <select id="modelo">
-      <option value="Modelo/clase1/caja.glb">Caja</option>
-      <option value="Modelo/clase1/Humvee.glb">Humvee</option>
-    </select>
-  </div>
+  <label for="modeloSelect">Elegí un modelo:</label>
+  <select id="modeloSelect">
+    <option value="caja.glb">Caja</option>
+    <option value="humvee.glb">Humvee</option>
+    <option value="tanque.glb">Tanque</option>
+  </select>
 
-  <div id="container"></div>
+  <model-viewer id="visor"
+                src="Modelo/caja.glb"
+                alt="Modelo 3D"
+                auto-rotate
+                camera-controls
+                ar
+                environment-image="neutral"
+                exposure="0.6"
+                shadow-intensity="0.3"
+                shadow-softness="1">
+  </model-viewer>
 
-  <script type="module">
-    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-    import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
-    import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+  <script>
+    const selector = document.getElementById('modeloSelect');
+    const visor = document.getElementById('visor');
 
-    let scene, camera, renderer, loader, controls;
-    let currentModel;
-
-    init();
-    loadModel(document.getElementById('modelo').value);
-
-    document.getElementById('modelo').addEventListener('change', (e) => {
-      loadModel(e.target.value);
+    selector.addEventListener('change', () => {
+      const modelo = selector.value;
+      visor.src = `Modelo/${modelo}`;  // Asegúrate que la carpeta se llama Modelo con M mayúscula
     });
-
-    function init() {
-      scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x222222);
-
-      camera = new THREE.PerspectiveCamera(75, window.innerWidth / (0.8 * window.innerHeight), 0.1, 1000);
-      camera.position.set(0, 2, 5);
-
-      renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(window.innerWidth * 0.9, window.innerHeight * 0.8);
-
-      document.getElementById('container').appendChild(renderer.domElement);
-
-      loader = new GLTFLoader();
-
-      controls = new OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-
-      const light = new THREE.HemisphereLight(0xffffff, 0x444444);
-      light.position.set(0, 20, 0);
-      scene.add(light);
-
-      const dirLight = new THREE.DirectionalLight(0xffffff);
-      dirLight.position.set(5, 10, 7.5);
-      scene.add(dirLight);
-
-      window.addEventListener('resize', onWindowResize);
-
-      animate();
-    }
-
-    function loadModel(path) {
-      if (currentModel) {
-        scene.remove(currentModel);
-      }
-
-      loader.load(path, function (gltf) {
-        currentModel = gltf.scene;
-        currentModel.scale.set(1, 1, 1);
-        scene.add(currentModel);
-      }, undefined, function (error) {
-        console.error('Error cargando el modelo:', error);
-      });
-    }
-
-    function animate() {
-      requestAnimationFrame(animate);
-      controls.update();
-      renderer.render(scene, camera);
-    }
-
-    function onWindowResize() {
-      camera.aspect = window.innerWidth / (0.8 * window.innerHeight);
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth * 0.9, window.innerHeight * 0.8);
-    }
   </script>
+
 </body>
 </html>
