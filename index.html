@@ -2,107 +2,212 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Selector de Modelos 3D</title>
+  <title>Selector de Modelos 3D - Barra Lateral</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
-    body {
+    /* Reset básico */
+    * {
+      box-sizing: border-box;
+    }
+
+    body, html {
       margin: 0;
+      padding: 0;
+      height: 100%;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-      color: #333;
+      background: linear-gradient(to bottom, #0b2240 0%, #2a4a7b 100%);
+      color: #eee;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Contenedor principal: sidebar + visor */
+    .container {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Barra lateral gris vertical */
+    .sidebar {
+      width: 280px;
+      background-color: #2e2e2e;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 2rem;
-      min-height: 100vh;
+      gap: 1.5rem;
+      box-shadow: 3px 0 10px rgba(0,0,0,0.5);
+      overflow-y: auto;
     }
 
-    h1 {
-      margin-bottom: 1rem;
-      font-weight: 600;
-      color: #444;
-      text-shadow: 1px 1px 3px rgba(255 255 255 / 0.6);
+    .sidebar h2 {
+      margin: 0 0 1rem 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+      border-bottom: 2px solid #5599ee;
+      padding-bottom: 0.5rem;
+      color: #aad4ff;
+      user-select: none;
     }
 
-    label {
-      font-size: 1.1rem;
+    /* Lista de modelos */
+    .model-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .model-list li {
       margin-bottom: 0.5rem;
-      color: #555;
     }
 
-    select {
-      padding: 0.6rem 1rem;
+    /* Botones estilo selector */
+    .model-button {
+      display: block;
+      width: 100%;
+      padding: 0.5rem 1rem;
+      background-color: #3a3a3a;
+      color: #cfdcff;
+      border: none;
+      border-radius: 8px;
       font-size: 1rem;
-      margin-bottom: 2rem;
-      border-radius: 12px;
-      border: 1.5px solid #c4c4c4;
-      background-color: #f5f7fa;
-      color: #555;
-      box-shadow: inset 2px 2px 6px #d9e2ec, inset -2px -2px 6px #ffffff;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-      outline: none;
+      text-align: left;
       cursor: pointer;
-      width: 200px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      user-select: none;
     }
-    select:hover, select:focus {
-      border-color: #a3cef1;
-      box-shadow: 0 0 8px #a3cef1;
+
+    .model-button:hover, 
+    .model-button.active {
+      background-color: #557ecc;
+      color: #f0f8ff;
+      box-shadow: 0 0 8px #557ecc;
+    }
+
+    /* Visor modelo 3D a la derecha */
+    .viewer-container {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(to bottom, #152a4a 0%, #2a4a7b 100%);
+      padding: 20px;
     }
 
     model-viewer {
-      width: 90vw;
+      width: 90%;
       max-width: 900px;
-      height: 70vh;
+      height: 80vh;
       background: #f9fafb;
-      border: 2px solid #d1d5db;
       border-radius: 20px;
+      border: 2px solid #d1d5db;
       box-shadow: 0 8px 15px rgba(163, 206, 241, 0.4);
       transition: box-shadow 0.3s ease;
     }
+
     model-viewer:hover {
       box-shadow: 0 12px 25px rgba(163, 206, 241, 0.7);
     }
 
-    @media (max-width: 600px) {
-      model-viewer {
-        height: 50vh;
+    /* Scrollbar sidebar */
+    .sidebar::-webkit-scrollbar {
+      width: 8px;
+    }
+    .sidebar::-webkit-scrollbar-track {
+      background: #1f1f1f;
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+      background-color: #557ecc;
+      border-radius: 4px;
+    }
+
+    /* Responsive simple */
+    @media (max-width: 768px) {
+      body, html {
+        flex-direction: column;
       }
-      select {
+      .container {
+        flex-direction: column;
+        height: auto;
+      }
+      .sidebar {
         width: 100%;
+        height: auto;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 10px;
+        gap: 1rem;
+      }
+      .model-list {
+        display: flex;
+        gap: 10px;
+      }
+      .model-button {
+        flex: 0 0 auto;
+        white-space: nowrap;
+      }
+      .viewer-container {
+        height: 60vh;
+        padding: 10px;
+      }
+      model-viewer {
+        height: 60vh;
+        width: 100%;
+        max-width: none;
       }
     }
+
   </style>
 </head>
 <body>
 
-  <h1>Visualizador de Modelos 3D</h1>
+  <div class="container">
 
-  <label for="modeloSelect">Elegí un modelo:</label>
-  <select id="modeloSelect">
-    <option value="caja.glb">Caja</option>
-    <option value="humvee.glb">Humvee</option>
-    <option value="tanque.glb">Tanque</option>
-  </select>
+    <nav class="sidebar" aria-label="Selector de modelos 3D">
 
-  <model-viewer id="visor"
-                src="Modelo/caja.glb"
-                alt="Modelo 3D"
-                auto-rotate
-                camera-controls
-                ar
-                environment-image="neutral"
-                exposure="0.6"
-                shadow-intensity="0.3"
-                shadow-softness="1">
-  </model-viewer>
+      <h2>Modelos 3D</h2>
+
+      <ul class="model-list" role="list">
+        <li><button class="model-button active" data-src="Modelo/caja.glb">Caja</button></li>
+        <li><button class="model-button" data-src="Modelo/humvee.glb">Humvee</button></li>
+        <li><button class="model-button" data-src="Modelo/tanque.glb">Tanque</button></li>
+        <li><button class="model-button" data-src="Modelo/ejemplo1.glb">Ejemplo 1</button></li>
+        <li><button class="model-button" data-src="Modelo/ejemplo2.glb">Ejemplo 2</button></li>
+        <li><button class="model-button" data-src="Modelo/ejemplo3.glb">Ejemplo 3</button></li>
+      </ul>
+
+    </nav>
+
+    <main class="viewer-container">
+      <model-viewer id="visor"
+                    src="Modelo/caja.glb"
+                    alt="Modelo 3D"
+                    auto-rotate
+                    camera-controls
+                    ar
+                    environment-image="neutral"
+                    exposure="0.6"
+                    shadow-intensity="0.3"
+                    shadow-softness="1">
+      </model-viewer>
+    </main>
+
+  </div>
 
   <script>
-    const selector = document.getElementById('modeloSelect');
+    const buttons = document.querySelectorAll('.model-button');
     const visor = document.getElementById('visor');
 
-    selector.addEventListener('change', () => {
-      const modelo = selector.value;
-      visor.src = `Modelo/${modelo}`;  // Asegúrate que la carpeta se llama Modelo con M mayúscula
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Cambiar src del model-viewer
+        const src = button.getAttribute('data-src');
+        visor.src = src;
+
+        // Manejar clase active para resaltar botón seleccionado
+        buttons.forEach(b => b.classList.remove('active'));
+        button.classList.add('active');
+      });
     });
   </script>
 
