@@ -48,7 +48,7 @@
   </select>
 
   <model-viewer id="visor"
-                src="modelo/caja.glb"
+                src="Modelo/caja.glb"
                 alt="Modelo 3D"
                 auto-rotate
                 camera-controls
@@ -62,7 +62,7 @@
 
     selector.addEventListener('change', () => {
       const modelo = selector.value;
-      visor.src = `modelo/${modelo}`;
+      visor.src = `Modelo/${modelo}`;  // ← OJO: M mayúscula
     });
   </script>
 
