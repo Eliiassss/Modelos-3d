@@ -1,198 +1,227 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Selector de Modelos 3D - Barra Lateral</title>
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Visualizador 3D Profesional</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer@^3.4.0/dist/model-viewer.min.js"></script>
   <style>
-    /* Estilos idénticos a tu versión original (sin cambios) */
     * {
       box-sizing: border-box;
-    }
-
-    body, html {
       margin: 0;
       padding: 0;
-      height: 100%;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to bottom, #0b2240 0%, #2a4a7b 100%);
-      color: #eee;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0b2240 0%, #2a4a7b 100%);
+      color: #e0e9ff;
       display: flex;
+      min-height: 100vh;
       overflow: hidden;
     }
 
     .container {
       display: flex;
-      width: 100vw;
+      width: 100%;
       height: 100vh;
     }
 
+    /* Barra lateral */
     .sidebar {
-      width: 280px;
-      background-color: #2e2e2e;
-      padding: 20px;
+      width: 300px;
+      background: #2a2a2a;
+      padding: 25px 20px;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
-      box-shadow: 3px 0 10px rgba(0,0,0,0.5);
+      box-shadow: 4px 0 12px rgba(0,0,0,0.3);
+      z-index: 10;
       overflow-y: auto;
     }
 
-    .sidebar h2 {
-      margin: 0 0 1rem 0;
-      font-size: 1.4rem;
-      font-weight: 700;
-      border-bottom: 2px solid #5599ee;
-      padding-bottom: 0.5rem;
-      color: #aad4ff;
-      user-select: none;
+    .sidebar-header {
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #4a8bfc;
+    }
+
+    .sidebar-header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #c3ddff;
     }
 
     .model-list {
       list-style: none;
-      padding-left: 0;
-      margin: 0;
-    }
-
-    .model-list li {
-      margin-bottom: 0.5rem;
     }
 
     .model-button {
-      display: block;
       width: 100%;
-      padding: 0.5rem 1rem;
-      background-color: #3a3a3a;
-      color: #cfdcff;
+      padding: 12px 15px;
+      margin-bottom: 8px;
+      background: #3a3a3a;
       border: none;
       border-radius: 8px;
+      color: #d0e0ff;
       font-size: 1rem;
       text-align: left;
       cursor: pointer;
-      transition: background-color 0.3s ease, color 0.3s ease;
-      user-select: none;
+      transition: all 0.25s ease;
     }
 
-    .model-button:hover, 
+    .model-button:hover {
+      background: #4a8bfc;
+      transform: translateX(3px);
+    }
+
     .model-button.active {
-      background-color: #557ecc;
-      color: #f0f8ff;
-      box-shadow: 0 0 8px #557ecc;
+      background: #4a8bfc;
+      box-shadow: 0 0 0 2px #2a4a7b, 0 0 12px #4a8bfc;
     }
 
+    /* Área del visor */
     .viewer-container {
-      flex-grow: 1;
+      flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(to bottom, #152a4a 0%, #2a4a7b 100%);
-      padding: 20px;
+      background: #152a4a;
+      position: relative;
     }
 
     model-viewer {
       width: 90%;
-      max-width: 900px;
-      height: 80vh;
-      background: #f9fafb;
-      border-radius: 20px;
-      border: 2px solid #d1d5db;
-      box-shadow: 0 8px 15px rgba(163, 206, 241, 0.4);
-      transition: box-shadow 0.3s ease;
+      height: 90%;
+      background: #f8f9fa;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      border: 1px solid #e0e0e0;
     }
 
-    model-viewer:hover {
-      box-shadow: 0 12px 25px rgba(163, 206, 241, 0.7);
+    /* Loading progress */
+    .progress-bar {
+      display: block;
+      width: 100%;
+      height: 5px;
+      background: rgba(0,0,0,0.1);
+      position: absolute;
+      top: 0;
     }
 
+    .progress-bar::after {
+      content: '';
+      display: block;
+      width: 0;
+      height: 100%;
+      background: #4a8bfc;
+      animation: loading 1.5s ease-in-out infinite;
+    }
+
+    @keyframes loading {
+      0% { width: 0; }
+      100% { width: 100%; }
+    }
+
+    /* Scrollbar */
     .sidebar::-webkit-scrollbar {
       width: 8px;
     }
     .sidebar::-webkit-scrollbar-track {
-      background: #1f1f1f;
+      background: #1e1e1e;
     }
     .sidebar::-webkit-scrollbar-thumb {
-      background-color: #557ecc;
+      background: #4a8bfc;
       border-radius: 4px;
     }
 
+    /* Responsive */
     @media (max-width: 768px) {
-      body, html {
-        flex-direction: column;
-      }
       .container {
         flex-direction: column;
-        height: auto;
       }
       .sidebar {
         width: 100%;
         height: auto;
-        flex-direction: row;
-        overflow-x: auto;
-        padding: 10px;
-        gap: 1rem;
-      }
-      .model-list {
-        display: flex;
-        gap: 10px;
-      }
-      .model-button {
-        flex: 0 0 auto;
-        white-space: nowrap;
-      }
-      .viewer-container {
-        height: 60vh;
-        padding: 10px;
+        max-height: 200px;
       }
       model-viewer {
-        height: 60vh;
         width: 100%;
-        max-width: none;
+        height: 70vh;
+        border-radius: 0;
       }
     }
   </style>
 </head>
 <body>
-
   <div class="container">
-
-    <nav class="sidebar" aria-label="Selector de modelos 3D">
-      <h2>Modelos 3D</h2>
-      <ul class="model-list" role="list">
-        <!-- Modelos ahora en carpeta Modelo/ -->
-        <li><button class="model-button active" data-src="Modelo/caja.glb">Caja</button></li>
-        <li><button class="model-button" data-src="Modelo/Humvee.glb">Humvee</button></li>
+    <!-- Barra lateral -->
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h2>Modelos 3D</h2>
+      </div>
+      <ul class="model-list">
+        <li>
+          <button class="model-button active" data-src="Modelo/caja.glb">
+            Caja
+          </button>
+        </li>
+        <li>
+          <button class="model-button" data-src="Modelo/Humvee.glb">
+            Humvee
+          </button>
+        </li>
       </ul>
     </nav>
 
+    <!-- Visor 3D -->
     <main class="viewer-container">
-      <model-viewer id="visor"
-                    src="Modelo/caja.glb"  <!-- Ruta actualizada -->
-                    alt="Modelo 3D"
-                    auto-rotate
-                    camera-controls
-                    ar
-                    environment-image="neutral"
-                    exposure="0.6"
-                    shadow-intensity="0.3"
-                    shadow-softness="1">
+      <model-viewer
+        id="visor"
+        src="Modelo/caja.glb"
+        alt="Modelo 3D"
+        camera-controls
+        auto-rotate
+        camera-orbit="0deg 75deg 105%"
+        field-of-view="45deg"
+        interaction-prompt="none"
+        ar
+        environment-image="neutral"
+        exposure="0.8"
+        shadow-intensity="1"
+      >
+        <div class="progress-bar" slot="progress-bar"></div>
       </model-viewer>
     </main>
-
   </div>
 
   <script>
-    const buttons = document.querySelectorAll('.model-button');
-    const visor = document.getElementById('visor');
+    document.addEventListener('DOMContentLoaded', () => {
+      const visor = document.getElementById('visor');
+      const buttons = document.querySelectorAll('.model-button');
+      
+      // Controlador de eventos para los botones
+      buttons.forEach(button => {
+        button.addEventListener('click', () => {
+          const modelSrc = button.getAttribute('data-src');
+          
+          // Actualizar modelo
+          visor.src = modelSrc;
+          
+          // Actualizar estado activo
+          buttons.forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+          
+          // Restablecer la cámara
+          visor.cameraOrbit = '0deg 75deg 105%';
+        });
+      });
 
-    buttons.forEach(button => {
-      button.addEventListener('click', () => {
-        const src = button.getAttribute('data-src');
-        visor.src = src;
-        buttons.forEach(b => b.classList.remove('active'));
-        button.classList.add('active');
+      // Solución alternativa para problemas de controles
+      visor.addEventListener('load', () => {
+        visor.cameraControls = true;
+        visor.autoRotate = true;
       });
     });
   </script>
-
 </body>
 </html>
