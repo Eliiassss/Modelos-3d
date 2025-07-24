@@ -5,7 +5,7 @@
   <title>Selector de Modelos 3D - Barra Lateral</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
-    /* Reset básico */
+    /* Estilos idénticos a tu versión original (sin cambios) */
     * {
       box-sizing: border-box;
     }
@@ -21,14 +21,12 @@
       overflow: hidden;
     }
 
-    /* Contenedor principal: sidebar + visor */
     .container {
       display: flex;
       width: 100vw;
       height: 100vh;
     }
 
-    /* Barra lateral gris vertical */
     .sidebar {
       width: 280px;
       background-color: #2e2e2e;
@@ -50,7 +48,6 @@
       user-select: none;
     }
 
-    /* Lista de modelos */
     .model-list {
       list-style: none;
       padding-left: 0;
@@ -61,7 +58,6 @@
       margin-bottom: 0.5rem;
     }
 
-    /* Botones estilo selector */
     .model-button {
       display: block;
       width: 100%;
@@ -84,7 +80,6 @@
       box-shadow: 0 0 8px #557ecc;
     }
 
-    /* Visor modelo 3D a la derecha */
     .viewer-container {
       flex-grow: 1;
       display: flex;
@@ -109,7 +104,6 @@
       box-shadow: 0 12px 25px rgba(163, 206, 241, 0.7);
     }
 
-    /* Scrollbar sidebar */
     .sidebar::-webkit-scrollbar {
       width: 8px;
     }
@@ -121,7 +115,6 @@
       border-radius: 4px;
     }
 
-    /* Responsive simple */
     @media (max-width: 768px) {
       body, html {
         flex-direction: column;
@@ -165,14 +158,15 @@
     <nav class="sidebar" aria-label="Selector de modelos 3D">
       <h2>Modelos 3D</h2>
       <ul class="model-list" role="list">
-        <li><button class="model-button active" data-src="caja.glb">Caja</button></li>
-        <li><button class="model-button" data-src="Humvee.glb">Humvee</button></li>
+        <!-- Modelos ahora en carpeta Modelo/ -->
+        <li><button class="model-button active" data-src="Modelo/caja.glb">Caja</button></li>
+        <li><button class="model-button" data-src="Modelo/Humvee.glb">Humvee</button></li>
       </ul>
     </nav>
 
     <main class="viewer-container">
       <model-viewer id="visor"
-                    src="caja.glb"
+                    src="Modelo/caja.glb"  <!-- Ruta actualizada -->
                     alt="Modelo 3D"
                     auto-rotate
                     camera-controls
@@ -192,11 +186,8 @@
 
     buttons.forEach(button => {
       button.addEventListener('click', () => {
-        // Cambiar src del model-viewer
         const src = button.getAttribute('data-src');
         visor.src = src;
-
-        // Manejar clase active para resaltar botón seleccionado
         buttons.forEach(b => b.classList.remove('active'));
         button.classList.add('active');
       });
