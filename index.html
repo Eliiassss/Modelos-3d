@@ -2,240 +2,104 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Selector de Modelos 3D - Barra Lateral</title>
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <title>Visor de Modelos 3D</title>
   <style>
-    /* Reset básico */
-    * {
-      box-sizing: border-box;
+    body { margin: 0; overflow: hidden; font-family: Arial; }
+    canvas { display: block; }
+    #menuModelos {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1;
+      background-color: white;
+      padding: 8px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
-
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to bottom, #0b2240 0%, #2a4a7b 100%);
-      color: #eee;
-      display: flex;
-      overflow: hidden;
-    }
-
-    /* Contenedor principal: sidebar + visor */
-    .container {
-      display: flex;
-      width: 100vw;
-      height: 100vh;
-    }
-
-    /* Barra lateral gris vertical */
-    .sidebar {
-      width: 280px;
-      background-color: #2e2e2e;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      box-shadow: 3px 0 10px rgba(0,0,0,0.5);
-      overflow-y: auto;
-    }
-
-    .sidebar h2 {
-      margin: 0 0 1rem 0;
-      font-size: 1.4rem;
-      font-weight: 700;
-      border-bottom: 2px solid #5599ee;
-      padding-bottom: 0.5rem;
-      color: #aad4ff;
-      user-select: none;
-    }
-
-    .class-section {
-      margin-bottom: 1.5rem;
-    }
-
-    .class-section h3 {
-      margin: 0 0 0.7rem 0;
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #88b6ff;
-      user-select: none;
-    }
-
-    /* Lista de modelos */
-    .model-list {
-      list-style: none;
-      padding-left: 0;
-      margin: 0;
-    }
-
-    .model-list li {
-      margin-bottom: 0.5rem;
-    }
-
-    /* Botones estilo selector */
-    .model-button {
-      display: block;
-      width: 100%;
-      padding: 0.5rem 1rem;
-      background-color: #3a3a3a;
-      color: #cfdcff;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      text-align: left;
-      cursor: pointer;
-      transition: background-color 0.3s ease, color 0.3s ease;
-      user-select: none;
-    }
-
-    .model-button:hover, 
-    .model-button.active {
-      background-color: #557ecc;
-      color: #f0f8ff;
-      box-shadow: 0 0 8px #557ecc;
-    }
-
-    /* Visor modelo 3D a la derecha */
-    .viewer-container {
-      flex-grow: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(to bottom, #152a4a 0%, #2a4a7b 100%);
-      padding: 20px;
-    }
-
-    model-viewer {
-      width: 90%;
-      max-width: 900px;
-      height: 80vh;
-      background: #f9fafb;
-      border-radius: 20px;
-      border: 2px solid #d1d5db;
-      box-shadow: 0 8px 15px rgba(163, 206, 241, 0.4);
-      transition: box-shadow 0.3s ease;
-    }
-
-    model-viewer:hover {
-      box-shadow: 0 12px 25px rgba(163, 206, 241, 0.7);
-    }
-
-    /* Scrollbar sidebar */
-    .sidebar::-webkit-scrollbar {
-      width: 8px;
-    }
-    .sidebar::-webkit-scrollbar-track {
-      background: #1f1f1f;
-    }
-    .sidebar::-webkit-scrollbar-thumb {
-      background-color: #557ecc;
-      border-radius: 4px;
-    }
-
-    /* Responsive simple */
-    @media (max-width: 768px) {
-      body, html {
-        flex-direction: column;
-      }
-      .container {
-        flex-direction: column;
-        height: auto;
-      }
-      .sidebar {
-        width: 100%;
-        height: auto;
-        flex-direction: row;
-        overflow-x: auto;
-        padding: 10px;
-        gap: 1rem;
-      }
-      .class-section {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 0;
-      }
-      .model-list {
-        display: flex;
-        gap: 10px;
-      }
-      .model-button {
-        flex: 0 0 auto;
-        white-space: nowrap;
-      }
-      .viewer-container {
-        height: 60vh;
-        padding: 10px;
-      }
-      model-viewer {
-        height: 60vh;
-        width: 100%;
-        max-width: none;
-      }
-    }
-
   </style>
 </head>
 <body>
+  <select id="menuModelos">
+    <option value="caja">Caja</option>
+    <option value="Humvee">Humvee</option>
+  </select>
 
-  <div class="container">
+  <script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
+    import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/controls/OrbitControls.js';
+    import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/loaders/GLTFLoader.js';
 
-    <nav class="sidebar" aria-label="Selector de modelos 3D">
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf0f0f0);
 
-      <h2>Modelos 3D</h2>
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(2, 2, 4);
 
-      <section class="class-section" aria-labelledby="clase1-title">
-        <h3 id="clase1-title">Clase 1</h3>
-        <ul class="model-list" role="list">
-          <li><button class="model-button active" data-src="Modelo/clase1/caja.glb">Caja</button></li>
-          <li><button class="model-button" data-src="Modelo/clase1/humvee.glb">Humvee</button></li>
-          <li><button class="model-button" data-src="Modelo/clase1/tanque.glb">Tanque</button></li>
-        </ul>
-      </section>
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
 
-      <section class="class-section" aria-labelledby="clase2-title">
-        <h3 id="clase2-title">Clase 2</h3>
-        <ul class="model-list" role="list">
-          <li><button class="model-button" data-src="Modelo/clase2/ejemplo1.glb">Ejemplo 1</button></li>
-          <li><button class="model-button" data-src="Modelo/clase2/ejemplo2.glb">Ejemplo 2</button></li>
-          <li><button class="model-button" data-src="Modelo/clase2/ejemplo3.glb">Ejemplo 3</button></li>
-        </ul>
-      </section>
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
 
-    </nav>
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(5, 5, 5);
+    scene.add(light);
 
-    <main class="viewer-container">
-      <model-viewer id="visor"
-                    src="Modelo/clase1/caja.glb"
-                    alt="Modelo 3D"
-                    auto-rotate
-                    camera-controls
-                    ar
-                    environment-image="neutral"
-                    exposure="0.6"
-                    shadow-intensity="0.3"
-                    shadow-softness="1">
-      </model-viewer>
-    </main>
+    const ambientLight = new THREE.AmbientLight(0x404040);
+    scene.add(ambientLight);
 
-  </div>
+    const loader = new GLTFLoader();
+    let modeloActual = null;
 
-  <script>
-    const buttons = document.querySelectorAll('.model-button');
-    const visor = document.getElementById('visor');
+    function cargarModelo(nombreArchivo) {
+      const ruta = `Modelo/clase1/${nombreArchivo}.glb`;
 
-    buttons.forEach(button => {
-      button.addEventListener('click', () => {
-        // Cambiar src del model-viewer
-        const src = button.getAttribute('data-src');
-        visor.src = src;
+      loader.load(ruta, gltf => {
+        if (modeloActual) {
+          scene.remove(modeloActual);
+          modeloActual.traverse(obj => {
+            if (obj.geometry) obj.geometry.dispose();
+            if (obj.material) {
+              if (Array.isArray(obj.material)) {
+                obj.material.forEach(mat => mat.dispose());
+              } else {
+                obj.material.dispose();
+              }
+            }
+          });
+        }
 
-        // Manejar clase active para resaltar botón seleccionado
-        buttons.forEach(b => b.classList.remove('active'));
-        button.classList.add('active');
+        modeloActual = gltf.scene;
+        scene.add(modeloActual);
+        modeloActual.position.set(0, 0, 0);
+        modeloActual.scale.set(1, 1, 1);
+      }, undefined, error => {
+        console.error('Error al cargar el modelo:', error);
       });
-    });
-  </script>
+    }
 
+    // Cargar el modelo inicial
+    cargarModelo('caja');
+
+    document.getElementById('menuModelos').addEventListener('change', e => {
+      const nombreModelo = e.target.value;
+      cargarModelo(nombreModelo);
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    animate();
+  </script>
 </body>
 </html>
