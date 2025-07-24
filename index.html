@@ -1,38 +1,75 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Selector de Modelos 3D</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #111;
-      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      color: #333;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 2rem;
+      min-height: 100vh;
     }
 
     h1 {
       margin-bottom: 1rem;
+      font-weight: 600;
+      color: #444;
+      text-shadow: 1px 1px 3px rgba(255 255 255 / 0.6);
+    }
+
+    label {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: #555;
     }
 
     select {
-      padding: 0.5rem;
+      padding: 0.6rem 1rem;
       font-size: 1rem;
       margin-bottom: 2rem;
-      border-radius: 5px;
+      border-radius: 12px;
+      border: 1.5px solid #c4c4c4;
+      background-color: #f5f7fa;
+      color: #555;
+      box-shadow: inset 2px 2px 6px #d9e2ec, inset -2px -2px 6px #ffffff;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      outline: none;
+      cursor: pointer;
+      width: 200px;
+    }
+    select:hover, select:focus {
+      border-color: #a3cef1;
+      box-shadow: 0 0 8px #a3cef1;
     }
 
     model-viewer {
       width: 90vw;
+      max-width: 900px;
       height: 70vh;
-      background: #1e1e1e;
-      border: 2px solid #444;
-      border-radius: 10px;
+      background: #f9fafb;
+      border: 2px solid #d1d5db;
+      border-radius: 20px;
+      box-shadow: 0 8px 15px rgba(163, 206, 241, 0.4);
+      transition: box-shadow 0.3s ease;
+    }
+    model-viewer:hover {
+      box-shadow: 0 12px 25px rgba(163, 206, 241, 0.7);
+    }
+
+    @media (max-width: 600px) {
+      model-viewer {
+        height: 50vh;
+      }
+      select {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -62,7 +99,7 @@
 
     selector.addEventListener('change', () => {
       const modelo = selector.value;
-      visor.src = `Modelo/${modelo}`;  // ← OJO: M mayúscula
+      visor.src = `Modelo/${modelo}`;  // OJO: M mayúscula en carpeta
     });
   </script>
 
