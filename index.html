@@ -90,7 +90,10 @@
                 auto-rotate
                 camera-controls
                 ar
-                shadow-intensity="1">
+                environment-image="neutral"
+                exposure="0.6"
+                shadow-intensity="0.3"
+                shadow-softness="1">
   </model-viewer>
 
   <script>
@@ -99,7 +102,7 @@
 
     selector.addEventListener('change', () => {
       const modelo = selector.value;
-      visor.src = `Modelo/${modelo}`;  // OJO: M mayúscula en carpeta
+      visor.src = `Modelo/${modelo}`;  // Asegúrate que la carpeta se llama Modelo con M mayúscula
     });
   </script>
 
