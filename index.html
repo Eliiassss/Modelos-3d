@@ -156,7 +156,6 @@
         max-width: none;
       }
     }
-
   </style>
 </head>
 <body>
@@ -164,23 +163,16 @@
   <div class="container">
 
     <nav class="sidebar" aria-label="Selector de modelos 3D">
-
       <h2>Modelos 3D</h2>
-
       <ul class="model-list" role="list">
-        <li><button class="model-button active" data-src="Modelo/caja.glb">Caja</button></li>
-        <li><button class="model-button" data-src="Modelo/humvee.glb">Humvee</button></li>
-        <li><button class="model-button" data-src="Modelo/tanque.glb">Tanque</button></li>
-        <li><button class="model-button" data-src="Modelo/ejemplo1.glb">Ejemplo 1</button></li>
-        <li><button class="model-button" data-src="Modelo/ejemplo2.glb">Ejemplo 2</button></li>
-        <li><button class="model-button" data-src="Modelo/ejemplo3.glb">Ejemplo 3</button></li>
+        <li><button class="model-button active" data-src="caja.glb">Caja</button></li>
+        <li><button class="model-button" data-src="Humvee.glb">Humvee</button></li>
       </ul>
-
     </nav>
 
     <main class="viewer-container">
       <model-viewer id="visor"
-                    src="Modelo/caja.glb"
+                    src="caja.glb"
                     alt="Modelo 3D"
                     auto-rotate
                     camera-controls
